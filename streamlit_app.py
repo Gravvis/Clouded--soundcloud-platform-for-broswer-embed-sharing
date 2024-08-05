@@ -20,21 +20,21 @@ def get_soundcloud_embed_code(soundcloud_link):
     except:
         return None
 
-def generate_shareable_url():
+def generate_shareable_url(request_path):
     """
     Generate a unique, shareable URL for the generated SoundCloud embed page.
     """
     unique_id = str(uuid.uuid4())[:8]
-    shareable_url = f"/soundcloud-embed/{unique_id}"
+    shareable_url = f"{request_path}/{unique_id}"
     return shareable_url
 
-def display_soundcloud_embed(soundcloud_link):
+def display_soundcloud_embed(soundcloud_link, request_path):
     """
     Display the SoundCloud embed content on a new page.
     """
     embed_code = get_soundcloud_embed_code(soundcloud_link)
     if embed_code:
-        shareable_url = generate_shareable_url()
+        shareable_url = generate_shareable_url(request_path)
         st.set_page_config(page_title="SoundCloud Embed", page_url=shareable_url)
         st.markdown(f"Share this link: {shareable_url}")
         st.markdown(embed_code, unsafe_allow_html=True)
@@ -50,10 +50,11 @@ def main():
     soundcloud_embed_code = st.text_area("Or, paste SoundCloud Embed Code")
 
     if st.button("Generate"):
+        request_path = st.experimental_get_query_params().get("p", ["/soundcloud-embed"])[0]
         if soundcloud_embed_code:
-            display_soundcloud_embed(soundcloud_embed_code)
+            display_soundcloud_embed(soundcloud_embed_code, request_path)
         else:
-            display_soundcloud_embed(soundcloud_link)
+            display_soundcloud_embed(soundcloud_link, request_path)
 
 if __name__ == "__main__":
     main()
