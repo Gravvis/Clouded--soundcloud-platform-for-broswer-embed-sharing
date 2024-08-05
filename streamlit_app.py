@@ -30,15 +30,15 @@ def get_soundcloud_embed_code(soundcloud_link):
     try:
         # Extract the track or playlist ID from the link
         if "tracks" in soundcloud_link:
-            track_id = re.search(r"tracks\/(\d+)", soundcloud_link).group(1)
+            track_id = soundcloud_link.split("/")[-1]
             embed_code = f'<iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/{track_id}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>'
         elif "playlists" in soundcloud_link:
-            playlist_id = re.search(r"playlists\/(\d+)", soundcloud_link).group(1)
+            playlist_id = soundcloud_link.split("/")[-1]
             embed_code = f'<iframe width="100%" height="450" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/{playlist_id}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>'
         else:
             return None
         return embed_code
-    except (AttributeError, IndexError):
+    except:
         return None
 
 def generate_shareable_url():
