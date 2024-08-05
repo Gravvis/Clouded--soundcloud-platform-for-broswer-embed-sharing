@@ -1,6 +1,32 @@
 import streamlit as st
-from utils.soundcloud_parser import get_soundcloud_embed_code
-from utils.url_generator import generate_shareable_url
+import re
+import uuid
+
+def get_soundcloud_embed_code(soundcloud_link):
+    """
+    Extract the necessary information from the SoundCloud link and generate the embed code.
+    """
+    try:
+        # Extract the track or playlist ID from the link
+        if "tracks" in soundcloud_link:
+            track_id = re.search(r"tracks\/(\d+)", soundcloud_link).group(1)
+            embed_code = f'<iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/{track_id}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>'
+        elif "playlists" in soundcloud_link:
+            playlist_id = re.search(r"playlists\/(\d+)", soundcloud_link).group(1)
+            embed_code = f'<iframe width="100%" height="450" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/{playlist_id}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>'
+        else:
+            return None
+        return embed_code
+    except (AttributeError, IndexError):
+        return None
+
+def generate_shareable_url():
+    """
+    Generate a unique, shareable URL for the generated SoundCloud embed page.
+    """
+    unique_id = str(uuid.uuid4())[:8]
+    shareable_url = st.beta_set_page_config(page_url=f"/soundcloud-embed/{unique_id}")
+    return shareable_url
 
 def main():
     st.set_page_config(page_title="SoundCloud Embed Generator")
