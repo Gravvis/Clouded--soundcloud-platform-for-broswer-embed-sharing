@@ -46,7 +46,7 @@ def generate_shareable_url():
     Generate a unique, shareable URL for the generated SoundCloud embed page.
     """
     unique_id = str(uuid.uuid4())[:8]
-    shareable_url = st.beta_set_page_config(page_url=f"/soundcloud-embed/{unique_id}")
+    shareable_url = f"/soundcloud-embed/{unique_id}"
     return shareable_url
 
 if __name__ == "__main__":
