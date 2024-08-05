@@ -1,6 +1,7 @@
 import streamlit as st
 import re
 import uuid
+import requests
 
 def get_soundcloud_embed_code(soundcloud_link):
     """
@@ -35,7 +36,7 @@ def display_soundcloud_embed(soundcloud_link, request_path):
     embed_code = get_soundcloud_embed_code(soundcloud_link)
     if embed_code:
         shareable_url = generate_shareable_url(request_path)
-        st.set_page_config(page_title="SoundCloud Embed", page_url=shareable_url)
+        st.set_page_config(page_name="SoundCloud Embed")
         st.markdown(f"Share this link: {shareable_url}")
         st.markdown(embed_code, unsafe_allow_html=True)
     else:
@@ -50,11 +51,16 @@ def main():
     soundcloud_embed_code = st.text_area("Or, paste SoundCloud Embed Code")
 
     if st.button("Generate"):
-        request_path = st.experimental_get_query_params().get("p", ["/soundcloud-embed"])[0]
-        if soundcloud_embed_code:
-            display_soundcloud_embed(soundcloud_embed_code, request_path)
-        else:
-            display_soundcloud_embed(soundcloud_link, request_path)
+        try:
+            request_path = st.experimental_get_query_params().get("p", ["/soundcloud-embed"])[0]
+            if soundcloud_embed_code:
+                display_soundcloud_embed(soundcloud_embed_code, request_path)
+            else:
+                display_soundcloud_embed(soundcloud_link, request_path)
+        except requests.exceptions.RequestException as e:
+            st.error(f"Error: {e}")
+        except Exception as e:
+            st.error(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
     main()
